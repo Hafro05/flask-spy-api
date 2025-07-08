@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Espion API - Test</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+    input, button { padding: 8px; font-size: 16px; margin-top: 10px; width: 100%; }
+    pre { background: #f4f4f4; padding: 10px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Test API /whoami</h1>
+  <input id="prenomInput" type="text" placeholder="Entre ton prénom" />
+  <button onclick="callApi()">Envoyer</button>
+
+  <pre id="responseBox">Réponse API ici...</pre>
+
+  <script>
+    async function callApi() {
+      const prenom = document.getElementById('prenomInput').value;
+      const responseBox = document.getElementById('responseBox');
+
+      if (!prenom) {
+        responseBox.textContent = "Merci d'entrer un prénom.";
+        return;
+      }
+
+      try {
+        const res = await fetch('/whoami', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prenom })
+        });
+        const data = await res.json();
+        responseBox.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        responseBox.textContent = "Erreur : " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
