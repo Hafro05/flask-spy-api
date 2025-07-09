@@ -1,3 +1,5 @@
-Flask
-Flask-SQLAlchemy
+flask
+flask_sqlalchemy
+gunicorn
+flasgger
 requests
