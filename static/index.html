@@ -2,42 +2,21 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Espion API - Test</title>
-  <style>
-    body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
-    input, button { padding: 8px; font-size: 16px; margin-top: 10px; width: 100%; }
-    pre { background: #f4f4f4; padding: 10px; margin-top: 20px; }
-  </style>
+  <title>API Espion 🕵️</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-  <h1>Test API /whoami</h1>
-  <input id="prenomInput" type="text" placeholder="Entre ton prénom" />
-  <button onclick="callApi()">Envoyer</button>
+  <h1>API Espion 🕵️</h1>
 
-  <pre id="responseBox">Réponse API ici...</pre>
+  <div class="card">
+    <label for="prenomInput">Quel est ton prénom ?</label>
+    <input id="prenomInput" type="text" placeholder="Ex: Alice" />
+    <button onclick="callApi()">Envoie-moi ma prédiction</button>
 
-  <script>
-    async function callApi() {
-      const prenom = document.getElementById('prenomInput').value;
-      const responseBox = document.getElementById('responseBox');
+    <div class="loader" id="loader">⏳ Chargement...</div>
+    <div class="output" id="responseBox">La réponse apparaîtra ici.</div>
+  </div>
 
-      if (!prenom) {
-        responseBox.textContent = "Merci d'entrer un prénom.";
-        return;
-      }
-
-      try {
-        const res = await fetch('/whoami', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prenom })
-        });
-        const data = await res.json();
-        responseBox.textContent = JSON.stringify(data, null, 2);
-      } catch (err) {
-        responseBox.textContent = "Erreur : " + err.message;
-      }
-    }
-  </script>
+  <script src="/static/script.js"></script>
 </body>
 </html>

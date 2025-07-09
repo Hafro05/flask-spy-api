@@ -1,0 +1,9 @@
+# Fichier `.gitignore`
+__pycache__/
+*.pyc
+*.db
+.env
+venv/
+.env.*
+.idea/
+.DS_Store

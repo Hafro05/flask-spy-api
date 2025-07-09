@@ -2,13 +2,48 @@ from flask import Flask, request, jsonify, send_from_directory
 from models import db, UserInfo
 from predictions import get_random_prediction
 from utils import get_ip, parse_user_agent, get_city_from_ip
+from flasgger import Swagger
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+Swagger(app)
 db.init_app(app)
 
 @app.route('/whoami', methods=['POST'])
 def whoami():
+    """
+    Enregistre ou récupère un utilisateur via son IP
+
+    ---
+    tags:
+      - Utilisateur
+    parameters:
+      - name: prenom
+        in: body
+        required: true
+        schema:
+          type: object
+          properties:
+            prenom:
+              type: string
+              example: Alice
+    responses:
+      200:
+        description: Utilisateur déjà existant
+        schema:
+          id: User
+          properties:
+            message:
+              type: string
+            ip:
+              type: string
+            ville:
+              type: string
+            prediction:
+              type: string
+      201:
+        description: Nouvel utilisateur enregistré
+    """
     data = request.get_json()
     prenom = data.get('prenom')
 
@@ -16,6 +51,19 @@ def whoami():
         return jsonify({"error": "Le champ 'prenom' est obligatoire."}), 400
 
     ip = get_ip()
+    existing = UserInfo.query.filter_by(prenom=prenom,ip=ip).first()
+    if existing:
+        return jsonify({
+            "message": f"Rebienvenue {existing.prenom}, tu es déjà fiché 🕵️",
+            "ip": existing.ip,
+            "ville": existing.ville,
+            "os": existing.os,
+            "browser": existing.browser,
+            "prediction": existing.prediction,
+            "timestamp": existing.created_at.isoformat()
+        }), 200
+    
+    # Sinon, nouvelle entrée
     ua_info = parse_user_agent()
     ville = get_city_from_ip(ip)
     prediction = get_random_prediction()
@@ -40,7 +88,7 @@ def whoami():
         "browser": ua_info['browser'],
         "prediction": prediction,
         "timestamp": user.created_at.isoformat()
-    })
+    }), 201
 
 
 @app.route('/')
