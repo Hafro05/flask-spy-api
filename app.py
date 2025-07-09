@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, send_from_directory
 from models import db, UserInfo
 from predictions import get_random_prediction
@@ -8,6 +9,10 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 Swagger(app)
 db.init_app(app)
+with app.app_context():
+    if not os.path.exists("data.db"):
+        print("👉 Création de la base de données...")
+        db.create_all()
 
 @app.route('/whoami', methods=['POST'])
 def whoami():
