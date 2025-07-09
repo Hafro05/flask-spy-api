@@ -3,3 +3,6 @@ flask_sqlalchemy
 gunicorn
 flasgger
 requests
+pyyaml
+ua-parser
+user-agents

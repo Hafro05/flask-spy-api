@@ -1,16 +1,16 @@
 import requests
 from flask import request
+from user_agents import parse
 
 def get_ip():
     # X-Forwarded-For = si derrière un proxy (Heroku, nginx...)
     return request.headers.get('X-Forwarded-For', request.remote_addr)
 
-def parse_user_agent():
-    ua = request.user_agent
+def parse_user_agent(user_agent_string):
+    ua = parse(user_agent_string)
     return {
-        "os": ua.platform or "Inconnu",
-        "browser": ua.browser or "Inconnu",
-        "user_agent": str(ua)
+        "os": ua.os.family + " " + ua.os.version_string,            # Ex: 'iOS', 'Windows', 'Linux'
+        "browser": ua.browser.family   # Ex: 'Chrome', 'Safari', 'Firefox'
     }
 
 def get_city_from_ip(ip):

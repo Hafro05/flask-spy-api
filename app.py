@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from models import db, UserInfo
 from predictions import get_random_prediction
 from utils import get_ip, parse_user_agent, get_city_from_ip
-from flasgger import Swagger
+from flasgger import Swagger, swag_from
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -69,7 +69,8 @@ def whoami():
         }), 200
     
     # Sinon, nouvelle entrée
-    ua_info = parse_user_agent()
+    user_agent_str = request.headers.get('User-Agent', '')
+    ua_info = parse_user_agent(user_agent_str)
     ville = get_city_from_ip(ip)
     prediction = get_random_prediction()
 
@@ -78,7 +79,7 @@ def whoami():
         ip=ip,
         os=ua_info['os'],
         browser=ua_info['browser'],
-        user_agent=ua_info['user_agent'],
+        user_agent=user_agent_str,
         ville=ville,
         prediction=prediction
     )
@@ -95,6 +96,27 @@ def whoami():
         "timestamp": user.created_at.isoformat()
     }), 201
 
+
+@app.route("/reset", methods=["POST"])
+@swag_from({
+    'tags': ['Admin'],
+    'summary': "Réinitialise la base de données",
+    'description': "⚠️ Supprime toutes les données et recrée les tables.",
+    'responses': {
+        200: {
+            'description': "Base de données réinitialisée avec succès.",
+            'examples': {
+                'application/json': {
+                    'message': 'Base de données réinitialisée.'
+                }
+            }
+        }
+    }
+})
+def reset_db():
+    db.drop_all()
+    db.create_all()
+    return jsonify({"message": "Base de données réinitialisée."}), 200
 
 @app.route('/')
 def index():
