@@ -14,12 +14,9 @@ def parse_user_agent(user_agent_string):
     }
 
 def get_city_from_ip(ip):
-    ip = '8.8.8.8'
     try:
         url = f"https://ipwho.is/{ip}"
         response = requests.get(url, timeout=3)
-        print(ip)
-        print(response)
         if response.status_code == 200:
             data = response.json()
             if data.get("success"):
