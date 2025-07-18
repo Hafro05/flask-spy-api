@@ -71,8 +71,8 @@ def whoami():
     # Sinon, nouvelle entrée
     user_agent_str = request.headers.get('User-Agent', '')
     ua_info = parse_user_agent(user_agent_str)
-    ville = get_city_from_ip(ip)
-    print(f"Ip: {ip}\nVille: {ville}")
+    ville = get_city_from_ip(ip.split(",")[0])
+    print(f"Ip: {ip.split(",")[0]}\nVille: {ville}")
     prediction = get_random_prediction()
 
     user = UserInfo(
