@@ -1,7 +1,10 @@
+import os
 import requests
 from flask import request
 from user_agents import parse
+from dotenv import load_dotenv
 
+load_dotenv()
 def get_ip():
     # X-Forwarded-For = si derrière un proxy (Heroku, nginx...)
     return request.headers.get('X-Forwarded-For', request.remote_addr)
@@ -15,7 +18,7 @@ def parse_user_agent(user_agent_string):
 
 def get_city_from_ip(ip):
     try:
-        access_key = "f7fbc224999ae38bcd001ff932b86457"
+        access_key = os.getenv("IPAPI_KEY")
         url = f"http://api.ipapi.com/api/{ip}?access_key={access_key}&fields=city,country_name"
         response = requests.get(url, timeout=3)
         if response.status_code == 200:

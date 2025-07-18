@@ -6,3 +6,4 @@ requests
 pyyaml
 ua-parser
 user-agents
+python-dotenv
