@@ -14,23 +14,20 @@ def parse_user_agent(user_agent_string):
     }
 
 def get_city_from_ip(ip):
-    if ip == '127.0.0.1':
-        ip = '8.8.8.8'
     try:
-        url = f"https://ipwho.is/{ip}"
+        access_key = "f7fbc224999ae38bcd001ff932b86457"
+        url = f"http://api.ipapi.com/api/{ip}?access_key={access_key}&fields=city,country_name"
         response = requests.get(url, timeout=3)
         if response.status_code == 200:
             data = response.json()
-            print(data)
-            if data.get("success"):
-                city = data.get("city")
-                country = data.get("country")
-                flag = data.get("flag").get("emoji")
-                if city and country:
-                    return f"{city}, {country} {flag}"
-                elif country:
-                    return country
+            city = data.get("city")
+            country = data.get("country_name")
+            if city and country:
+                return f"{city}, {country}"
+            elif country:
+                return country
     except Exception as e:
-        print(f"[Erreur ipwho.is] {e}")
+        print(f"[Erreur IPAPI] {e}")
     return "Inconnu"
+
 
